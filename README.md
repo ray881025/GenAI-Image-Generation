@@ -21,6 +21,28 @@ This project showcases how to build a full-stack text-to-image generation app us
 
 ---
 
+## 🖥️ Demo
+
+### 🏠 Home Page
+
+![Home](frontend/public/demo/homePage1.png)  
+![Home Continued](frontend/public/demo/homePage2.png)
+
+### 🎨 Image Generator
+
+![Generator](frontend/public/demo/ImageGenerator.png)
+
+### 🖼️ Gallery
+
+![Gallery](frontend/public/demo/Gallery.png)
+
+### 📖 About Page
+
+![About](frontend/public/demo/About1.png)  
+![About Continued](frontend/public/demo/About2.png)
+
+---
+
 ## 🧰 Tech Stack
 
 | Layer          | Technology                                       |
