@@ -1,9 +1,76 @@
-import React from 'react';
-import { Typography, Button, Grid, Paper, Box, Container } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Typography, Button, Grid, Paper, Box, Container, CircularProgress, Card, CardMedia, CardContent } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { Image as ImageIcon } from '@mui/icons-material';
+import axios from 'axios';
 
 const HomePage = () => {
+  const [featuredImages, setFeaturedImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Mock data for fallback if API fails
+  const mockImages = [
+    {
+      id: 1,
+      url: 'https://images.unsplash.com/photo-1675271591211-126817a53f83',
+      prompt: 'A futuristic cityscape with flying cars and neon lights',
+      created_at: '2023-05-10T14:30:00Z',
+    },
+    {
+      id: 2,
+      url: 'https://images.unsplash.com/photo-1682687982501-1e58ab814714',
+      prompt: 'A serene landscape with mountains and a lake at sunset',
+      created_at: '2023-05-09T10:15:00Z',
+    },
+    {
+      id: 3,
+      url: 'https://images.unsplash.com/photo-1686349719912-0a4c0a591c6c',
+      prompt: 'An abstract painting with vibrant colors and geometric shapes',
+      created_at: '2023-05-08T16:45:00Z',
+    }
+  ];
+  
+  // Format date
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  
+  // Fetch featured images from the API
+  useEffect(() => {
+    const fetchFeaturedImages = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Get list of generated images from the backend API
+        const response = await axios.get('/api/v1/images');
+        
+        if (response.data && Array.isArray(response.data)) {
+          const imageFiles = response.data.map((item, index) => ({
+            id: index + 1,
+            url: `/static/images/${item.filename}`,
+            prompt: item.prompt || 'Untitled',
+            created_at: item.created_at || new Date().toISOString()
+          }));
+          
+          // Get the 3 most recent images
+          const recentImages = imageFiles.slice(0, 3);
+          setFeaturedImages(recentImages);
+        }
+      } catch (err) {
+        console.error('Error fetching images:', err);
+        // Fall back to mock data if API call fails
+        setFeaturedImages(mockImages);
+        setError('Could not load images from server. Showing sample images instead.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedImages();
+  }, []);
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
@@ -39,21 +106,73 @@ const HomePage = () => {
                 boxShadow: '0 10px 40px -10px rgba(0,0,0,0.2)'
               }}
             >
-              <Box
-                component="img"
-                src="https://cdn.pixabay.com/photo/2023/05/25/ai-art-generator-800.jpg"
-                alt="AI Generated Art Example"
-                sx={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 2,
-                }}
-              />
+              {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
+                  <CircularProgress />
+                </Box>
+              ) : featuredImages.length > 0 ? (
+                <Box
+                  component="img"
+                  src={featuredImages[0].url.startsWith('http') 
+                    ? featuredImages[0].url
+                    : `${window.location.origin}${featuredImages[0].url}`}
+                  alt={featuredImages[0].prompt}
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 2,
+                  }}
+                />
+              ) : (
+                <Box
+                  component="img"
+                  src="https://cdn.pixabay.com/photo/2023/05/25/ai-art-generator-800.jpg"
+                  alt="AI Generated Art Example"
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 2,
+                  }}
+                />
+              )}
             </Paper>
           </Grid>
         </Grid>
       </Box>
 
+      {featuredImages.length > 0 && (
+        <Box sx={{ my: 8 }}>
+          <Typography variant="h3" align="center" gutterBottom>
+            Recent AI Creations
+          </Typography>
+          <Grid container spacing={3} sx={{ mt: 4 }}>
+            {featuredImages.map((image) => (
+              <Grid item xs={12} sm={6} md={4} key={image.id}>
+                <Card sx={{ height: '100%' }}>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={image.url.startsWith('http') 
+                      ? image.url
+                      : `${window.location.origin}${image.url}`}
+                    alt={image.prompt}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {image.prompt}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      Created: {formatDate(image.created_at)}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      )}
+      
       <Box sx={{ my: 8 }}>
         <Typography variant="h3" align="center" gutterBottom>
           How It Works
