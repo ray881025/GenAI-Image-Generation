@@ -45,12 +45,12 @@ This project showcases how to build a full-stack text-to-image generation app us
 
 ## 🧰 Tech Stack
 
-| Layer          | Technology                                       |
-| -------------- | ------------------------------------------------ |
-| **Frontend**   | React.js, MUI                                    |
-| **Backend**    | Python, FastAPI                                  |
-| **AI Model**   | Stable Diffusion (via Hugging Face 🤗 Diffusers) |
-| **Deployment** | Docker + Docker Compose                          |
+| Layer          | Technology                                    |
+| -------------- | --------------------------------------------- |
+| **Frontend**   | React.js, MUI                                 |
+| **Backend**    | Python, FastAPI                               |
+| **AI Model**   | Stable Diffusion (via Hugging Face Diffusers) |
+| **Deployment** | Docker + Docker Compose                       |
 
 ---
 
