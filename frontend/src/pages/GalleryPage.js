@@ -35,7 +35,6 @@ const GalleryPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Mock data for demonstration purposes
-  // In a real application, this would come from the backend API
   const mockImages = [
     {
       id: 1,
