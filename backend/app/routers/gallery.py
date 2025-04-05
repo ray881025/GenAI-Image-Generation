@@ -41,7 +41,7 @@ async def list_images():
                     "created_at": created_at or datetime.utcnow().isoformat()
                 })
 
-        # Sort images by most recent
+        # Sort images by the most recent
         image_data.sort(key=lambda x: x["created_at"], reverse=True)
         return image_data
 
